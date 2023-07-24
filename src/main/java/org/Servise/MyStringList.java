@@ -1,18 +1,18 @@
 package org.Servise;
 
 import org.Exception.IndexNotFoundException;
-import org.Interface.StringList;
+import org.Interface.IntegerList;
 
 
-public class MyStringList implements StringList {
+public class MyStringList implements IntegerList {
 
 private final  int SIZE=10;
-private  String[] stringArray=new String[SIZE];
+private  Integer[] stringArray=new Integer[SIZE];
 private  int pointer=0;
     @Override
-    public String add(String item) {
+    public Integer add(Integer item) {
         if(pointer==stringArray.length-1){
-            toArray(pointer*2);}
+            extension(pointer*2);}
         for (int i = 0; i < stringArray.length; i++) {
             if (stringArray[i]==null){
                 stringArray[i]=item;
@@ -22,12 +22,12 @@ private  int pointer=0;
     }
 
     @Override
-    public String add(int index, String item) {
+    public Integer add(int index, Integer item) {
         if(pointer==stringArray.length-1){
-            toArray(pointer*2);}
+            extension(pointer*2);}
         if (index>stringArray.length){throw new IndexNotFoundException();}
         else{
-        String[] addArray=new String[stringArray.length];
+            Integer[] addArray=new Integer[stringArray.length];
         for (int i = index+1; i < stringArray.length; i++) {
            addArray[i]=stringArray[i-1];
         }stringArray[index]=item;
@@ -38,14 +38,14 @@ stringArray[i]=addArray[i];
     }
 
     @Override
-    public String set(int index, String item) {
+    public Integer set(int index, Integer item) {
         if (index>=stringArray.length){throw new IndexNotFoundException();}
         else{stringArray[index]=item;}
         return item;
     }
 
     @Override
-    public String remove(String item) {
+    public Integer remove(Integer item) {
         int index=0;
         for (int i = 0; i < stringArray.length; i++) {
             if(stringArray[i].equals(item)){index=i;}
@@ -58,9 +58,9 @@ stringArray[i]=stringArray[i+1];
     }
 
     @Override
-    public String remove(int index) {
+    public Integer remove(int index) {
         if (index>=stringArray.length){throw new IndexNotFoundException();}
-        String item=stringArray[index];
+        Integer item=stringArray[index];
         for (int i = index; i < stringArray.length; i++) {
             stringArray[i]=stringArray[i+1];
         }stringArray[pointer]=null;
@@ -69,17 +69,13 @@ stringArray[i]=stringArray[i+1];
     }
 
     @Override
-    public boolean contains(String item) {
-        boolean cont=true;
-        for (String s : stringArray) {
-            cont = s.equals(item);
-        }
-
-        return cont;
-    }
+    public boolean contains(Integer item) {
+        Integer[] storageCopy= toArray();
+        sort(storageCopy);
+    return binarySearch(storageCopy,item);}
 
     @Override
-    public int indexOf(String item) {
+    public int indexOf(Integer item) {
         int index=-1;
         for (int i = 0; i < stringArray.length; i++) {
             if(stringArray[i].equals(item)){index=i;}
@@ -88,7 +84,7 @@ stringArray[i]=stringArray[i+1];
     }
 
     @Override
-    public int lastIndexOf(String item) {
+    public int lastIndexOf(Integer item) {
         int index=-1;
         for (int i = stringArray.length-1; i > 0; i--) {
             if(stringArray[i].equals(item)){index=i;}
@@ -97,19 +93,19 @@ stringArray[i]=stringArray[i+1];
     }
 
     @Override
-    public String get(int index) {
+    public Integer get(int index) {
         if (index>=stringArray.length){throw new IndexNotFoundException();}
-        String getI=stringArray[index];
+        Integer getI=stringArray[index];
         return getI;
     }
 
     @Override
-    public boolean equals(StringList otherList) {
+    public boolean equals(IntegerList otherList) {
         boolean e=true;
         if (this == otherList) e=true;
         if (otherList == null || getClass() != otherList.getClass()) e=false;
         for (int i = 0; i < stringArray.length; i++) {
-            if(stringArray[i].contains( otherList.get(1))){e=true;}
+            if(stringArray[i].equals( otherList.get(1))){e=true;}
             else {e=false;}
         }
         return e;
@@ -135,11 +131,48 @@ stringArray[i]=stringArray[i+1];
             stringArray[i]=null;
         }
     }
-
     @Override
-    public void toArray(int newLength) {
-        String[] newArray=new String[newLength];
+    public Integer[] toArray() {
+        Integer[] storageCopy=new Integer[stringArray.length];
+        System.arraycopy(stringArray, 0, storageCopy, 0, stringArray.length);
+    return storageCopy;
+    }
+    @Override
+    public void extension(int newLength) {
+        Integer[] newArray=new Integer[newLength];
         System.arraycopy(stringArray, 0, newArray, 0, pointer);
         stringArray=newArray;
+    }
+
+    public static void sort(Integer[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            Integer temp = arr[i];
+            int j = i;
+            while (j > 0 && arr[j - 1] >= temp) {
+                arr[j] = arr[j - 1];
+                j--;
+            }
+            arr[j] = temp;
+        }
+    }
+
+    public static boolean binarySearch(Integer[] arr, int items) {
+        int min = 0;
+        int max = arr.length - 1;
+
+        while (min <= max) {
+            int mid = (min + max) / 2;
+
+            if (items == arr[mid]) {
+                return true;
+            }
+
+            if (items < arr[mid]) {
+                max = mid - 1;
+            } else {
+                min = mid + 1;
+            }
+        }
+        return false;
     }
 }
