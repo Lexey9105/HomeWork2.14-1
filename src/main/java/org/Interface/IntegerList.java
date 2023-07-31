@@ -18,5 +18,5 @@ public interface IntegerList {
     void clear();
     Integer[] toArray();
     void extension(int newLength);
-
+    Integer[] mSort();
 }
